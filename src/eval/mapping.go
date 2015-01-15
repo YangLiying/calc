@@ -10,10 +10,11 @@ type operation interface {
 
 type operationAdd struct {
 	operator string
+	op1, op2 int
 }
 
 func (this *operationAdd) Getresult(opd1 int, opd2 int) (res int, err error) {
-	return opd1 + opd2, err
+	return this.op1 + this.op2, err
 }
 
 type operationSub struct {
@@ -57,4 +58,9 @@ func Mapping(operator string, operand []string) (result int, err error) {
 		}
 	*/
 	return
+}
+
+func Execute(root operation) (result int, err error) {
+
+	return root.Getresult(1, 2)
 }
