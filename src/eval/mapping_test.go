@@ -28,12 +28,41 @@ func TestMapping2(t *testing.T) {
 //}
 
 func TestExecute(t *testing.T) {
-	var root = &operationAdd{operator: "+", op1: 1, op2: 1}
+	var root = &OperationAdd{operator: "+", Op1: 1, Op2: 1}
 	ret, err := Execute(root)
 	if err != nil {
 		t.Fatal("Execute return error")
 	}
 	if ret != 2 {
 		t.Errorf("Expect %d, Actual %d", 2, ret)
+	}
+
+	var root1 = &OperationSub{operator: "-", Op1: 2, Op2: 1}
+	ret, err = Execute(root1)
+	if err != nil {
+		t.Fatal("Execute return error")
+	}
+	if ret != 1 {
+		t.Error("Expect %d, Actual %d", 1, ret)
+	}
+}
+
+func TestOperationBuilder(t *testing.T) {
+	var operator string = "+"
+	var operand []string = []string{"1", "3"}
+	op, err := OperationBuilder(operator, operand)
+	if err != nil {
+		t.Fatal("OperationBuilder return error")
+	}
+	if _, ok := op.(*OperationAdd); !ok {
+		t.Error("operator = %s, op: not OperationAdd", operator)
+	}
+	var operator1 string = "-"
+	op, err = OperationBuilder(operator1, operand)
+	if err != nil {
+		t.Fatal("OperatorBuilder return error")
+	}
+	if _, ok := op.(*OperationSub); !ok {
+		t.Error("operator: %s, op: not OperationSub", operator1)
 	}
 }

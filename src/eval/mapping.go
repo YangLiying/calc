@@ -4,28 +4,49 @@ import "fmt"
 import "strconv"
 import "errors"
 
-type operation interface {
-	Getresult(opd1 int, opd2 int) (res int, err error)
+type Operation interface {
+	Getresult() (res int, err error)
 }
 
-type operationAdd struct {
+type OperationAdd struct {
 	operator string
-	op1, op2 int
+	Op1, Op2 int
 }
 
-func (this *operationAdd) Getresult(opd1 int, opd2 int) (res int, err error) {
-	return this.op1 + this.op2, err
+func (this *OperationAdd) Getresult() (res int, err error) {
+	return this.Op1 + this.Op2, err
 }
 
-type operationSub struct {
+type OperationSub struct {
 	operator string
+	Op1, Op2 int
 }
 
-func (this *operationSub) Getresult(opd1 int, opd2 int) (res int, err error) {
-	return opd1 - opd2, err
+func (this *OperationSub) Getresult() (res int, err error) {
+	return this.Op1 - this.Op2, err
 }
 
 func Mapping(operator string, operand []string) (result int, err error) {
+	var op Operation
+	op, err = OperationBuilder(operator, operand)
+	if err != nil {
+		fmt.Println("[eval.Mapping]OperationBuilder error!")
+		err = errors.New("OperationBuilder error")
+	}
+	result, err = Execute(op)
+	if err != nil {
+		fmt.Println("[eval.Mapping]Execute error")
+		err = errors.New("Execute error")
+	}
+	return
+}
+
+func Execute(root Operation) (result int, err error) {
+
+	return root.Getresult()
+}
+
+func OperationBuilder(operator string, operand []string) (op Operation, err error) {
 	opd1, err1 := strconv.Atoi(operand[0])
 	opd2, err2 := strconv.Atoi(operand[1])
 	if err1 != nil || err2 != nil {
@@ -34,33 +55,15 @@ func Mapping(operator string, operand []string) (result int, err error) {
 		return
 	}
 
-	var op operation
+	//	var op Operation
 	switch operator {
 	case "+":
-		op = new(operationAdd)
+		op = &OperationAdd{Op1: opd1, Op2: opd2}
 	case "-":
-		op = new(operationSub)
+		op = &OperationSub{Op1: opd1, Op2: opd2}
 	default:
 		fmt.Println("unknown expression!")
 		err = errors.New("unknown expression")
 	}
-	result, err = op.Getresult(opd1, opd2)
-	/*
-		//var result int
-		switch operator {
-		case "+":
-			result = opd1 + opd2
-		case "-":
-			result = opd1 - opd2
-		default:
-			fmt.Println("unknown expression!")
-			err = errors.New("unknown expression")
-		}
-	*/
 	return
-}
-
-func Execute(root operation) (result int, err error) {
-
-	return root.Getresult(1, 2)
 }
