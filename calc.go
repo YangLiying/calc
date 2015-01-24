@@ -3,8 +3,8 @@ package main
 import "fmt"
 import "os"
 
-import "read"
-import "eval"
+import "calc/read"
+import "calc/eval"
 
 func main() {
 	if len(os.Args) > 1 {
