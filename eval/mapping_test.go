@@ -66,3 +66,27 @@ func TestOperationBuilder(t *testing.T) {
 		t.Error("operator: %s, op: not OperationSub", operator1)
 	}
 }
+
+func TestIntNumber(t *testing.T) {
+	numb := IntNumber{var_int: 1, var_float: 2}
+	r1, _ := numb.Var_int()
+	if r1 != 1 {
+		t.Fatal("Var_int() error!")
+	}
+	r2, _ := numb.Var_float()
+	if r2 != 1 {
+		t.Fatal("Var_float() error!")
+	}
+}
+
+func TestFloatNumber(t *testing.T) {
+	numb := FloatNumber{var_float: 1.2, var_int: 2}
+	r1, _ := numb.Var_float()
+	if r1 != 1.2 {
+		t.Fatal("Var_float() error!")
+	}
+	r2, _ := numb.Var_int()
+	if r2 != 1 {
+		t.Fatal("Var_int() error")
+	}
+}

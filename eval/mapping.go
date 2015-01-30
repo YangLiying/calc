@@ -4,6 +4,37 @@ import "fmt"
 import "strconv"
 import "errors"
 
+type Number interface {
+	Var_int() (int, error)
+	Vat_float() (float64, error)
+}
+
+type IntNumber struct {
+	var_int   int
+	var_float float64
+}
+
+func (this *IntNumber) Var_int() (int, error) {
+	return this.var_int, nil
+}
+func (this *IntNumber) Var_float() (float64, error) {
+	this.var_float = float64(this.var_int)
+	return this.var_float, nil
+}
+
+type FloatNumber struct {
+	var_int   int
+	var_float float64
+}
+
+func (this *FloatNumber) Var_float() (float64, error) {
+	return this.var_float, nil
+}
+func (this *FloatNumber) Var_int() (int, error) {
+	this.var_int = int(this.var_float)
+	return this.var_int, nil
+}
+
 type Operation interface {
 	Getresult() (res int, err error)
 }
