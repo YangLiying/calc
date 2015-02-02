@@ -6,7 +6,7 @@ import "errors"
 
 type Number interface {
 	Var_int() (int, error)
-	Vat_float() (float64, error)
+	Var_float() (float64, error)
 }
 
 type IntNumber struct {
@@ -41,20 +41,24 @@ type Operation interface {
 
 type OperationAdd struct {
 	operator string
-	Op1, Op2 int
+	Op1, Op2 Number
 }
 
 func (this *OperationAdd) Getresult() (res int, err error) {
-	return this.Op1 + this.Op2, err
+	p1, _ := this.Op1.Var_int()
+	p2, _ := this.Op2.Var_int()
+	return p1 + p2, err
 }
 
 type OperationSub struct {
 	operator string
-	Op1, Op2 int
+	Op1, Op2 Number
 }
 
 func (this *OperationSub) Getresult() (res int, err error) {
-	return this.Op1 - this.Op2, err
+	p1, _ := this.Op1.Var_int()
+	p2, _ := this.Op2.Var_int()
+	return p1 - p2, err
 }
 
 func Mapping(operator string, operand []string) (result int, err error) {
@@ -77,6 +81,14 @@ func Execute(root Operation) (result int, err error) {
 	return root.Getresult()
 }
 
+func AddIntFactory(intN1, intN2 IntNumber) *OperationAdd {
+	return &OperationAdd{Op1: &intN1, Op2: &intN2}
+}
+
+func SubIntFactory(intN1, intN2 IntNumber) *OperationSub {
+	return &OperationSub{Op1: &intN1, Op2: &intN2}
+}
+
 func OperationBuilder(operator string, operand []string) (op Operation, err error) {
 	opd1, err1 := strconv.Atoi(operand[0])
 	opd2, err2 := strconv.Atoi(operand[1])
@@ -89,9 +101,15 @@ func OperationBuilder(operator string, operand []string) (op Operation, err erro
 	//	var op Operation
 	switch operator {
 	case "+":
-		op = &OperationAdd{Op1: opd1, Op2: opd2}
+		n1 := IntNumber{var_int: opd1}
+		n2 := IntNumber{var_int: opd2}
+		op = AddIntFactory(n1, n2)
+		//op = &OperationAdd{Op1: opd1, Op2: opd2}
 	case "-":
-		op = &OperationSub{Op1: opd1, Op2: opd2}
+		n1 := IntNumber{var_int: opd1}
+		n2 := IntNumber{var_int: opd2}
+		op = SubIntFactory(n1, n2)
+		//op = &OperationSub{Op1: opd1, Op2: opd2}
 	default:
 		fmt.Println("unknown expression!")
 		err = errors.New("unknown expression")

@@ -28,7 +28,9 @@ func TestMapping2(t *testing.T) {
 //}
 
 func TestExecute(t *testing.T) {
-	var root = &OperationAdd{operator: "+", Op1: 1, Op2: 1}
+	n1 := IntNumber{var_int: 1, var_float: 2}
+	n2 := IntNumber{var_int: 1, var_float: 2}
+	var root = &OperationAdd{operator: "+", Op1: &n1, Op2: &n2}
 	ret, err := Execute(root)
 	if err != nil {
 		t.Fatal("Execute return error")
@@ -36,8 +38,9 @@ func TestExecute(t *testing.T) {
 	if ret != 2 {
 		t.Errorf("Expect %d, Actual %d", 2, ret)
 	}
-
-	var root1 = &OperationSub{operator: "-", Op1: 2, Op2: 1}
+	s1 := IntNumber{var_int: 2, var_float: 2}
+	s2 := IntNumber{var_int: 1, var_float: 2}
+	var root1 = &OperationSub{operator: "-", Op1: &s1, Op2: &s2}
 	ret, err = Execute(root1)
 	if err != nil {
 		t.Fatal("Execute return error")
@@ -89,4 +92,40 @@ func TestFloatNumber(t *testing.T) {
 	if r2 != 1 {
 		t.Fatal("Var_int() error")
 	}
+}
+
+func addIntFactory(a, b IntNumber) *OperationAdd {
+	return &OperationAdd{Op1: &a, Op2: &b}
+}
+func TestAdd(t *testing.T) {
+	//var n1 *Number
+	//n2 Number
+	//op Operation
+	n1 := IntNumber{var_int: 1, var_float: 2}
+	n2 := IntNumber{var_int: 1, var_float: 2}
+	op := addIntFactory(n1, n2)
+	res, err := op.Getresult()
+
+	if res != 2 || err != nil {
+		t.Fatal("[OperationAdd] Getresult error")
+	}
+
+}
+
+func subIntFactory(a, b IntNumber) *OperationSub {
+	return &OperationSub{Op1: &a, Op2: &b}
+}
+func TestSub(t *testing.T) {
+	//var n1 *Number
+	//n2 Number
+	//op Operation
+	n1 := IntNumber{var_int: 1, var_float: 2}
+	n2 := IntNumber{var_int: 1, var_float: 2}
+	op := subIntFactory(n1, n2)
+	res, err := op.Getresult()
+
+	if res != 0 || err != nil {
+		t.Fatal("[OperationAdd] Getresult error")
+	}
+
 }
